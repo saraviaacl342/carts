@@ -55,17 +55,7 @@ pipeline {
         recordDynatraceSession(
           envId: 'Dynatrace Tenant',
           testCase: 'loadtest',
-          tagMatchRules:  [
-            [
-              meTypes: [
-                [meType: 'SERVICE']
-              ],
-              tags: [
-                [context: 'CONTEXTLESS', key: 'app', value: "${env.APP_NAME}"],
-                [context: 'CONTEXTLESS', key: 'environment', value: 'dev']
-              ]
-            ]
-          ]
+          tagMatchRules: tagMatchRules
         ) 
         {
           container('jmeter') {
@@ -76,11 +66,11 @@ pipeline {
                 serverUrl: "${env.APP_NAME}.dev", 
                 serverPort: 80,
                 checkPath: '/health',
-                vuCount: 10,
-                loopCount: 250,
+                vuCount: 5,
+                loopCount: 500,
                 LTN: "PerfCheck_${BUILD_NUMBER}",
                 funcValidation: false,
-                avgRtValidation: 2000
+                avgRtValidation: 4000
               )
               if (status != 0) {
                 currentBuild.result = 'FAILED'
